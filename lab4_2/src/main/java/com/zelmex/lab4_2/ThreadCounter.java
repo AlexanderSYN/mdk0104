@@ -8,7 +8,6 @@ import static com.zelmex.lab4_2.IO.*;
 
 public class ThreadCounter implements Runnable {
     private long startTime, time;
-    private volatile boolean running = true;
     static AtomicInteger sharedCounter = new AtomicInteger(0);
     public Thread t;
     int count = 0;
@@ -26,10 +25,10 @@ public class ThreadCounter implements Runnable {
         count = 0;
         try {
             startTime = System.currentTimeMillis();
-            while (running && (System.currentTimeMillis() - startTime < 5000)) {
+            while (System.currentTimeMillis() - startTime < 5000) {
                 count++;
                 sharedCounter.incrementAndGet();
-                Thread.sleep(1000);
+                Thread.sleep(10);
             }
         }
         catch (InterruptedException ie) {
@@ -43,12 +42,9 @@ public class ThreadCounter implements Runnable {
         t.start();
     }
 
-    public void stop() {
-        running = false;
+    public void printInfo() {
         println("Поток " + t.getName() + ": личных итерации = " + count +
                 ", приоритет = " + t.getPriority());
-        println("Общий счётчик: " + sharedCounter.get());
-        println("Сумма личных счётчиков: ");
-        println("Победитель: ");
+
     }
 }
