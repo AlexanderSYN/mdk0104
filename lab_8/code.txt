@@ -1,0 +1,44 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class Main {
+    private static final AtomicInteger totalTrips = new AtomicInteger(0);
+
+    public static void main(String[] args) {
+        Thread elevator1 = new Thread(new ElevatorRunnable("Elevator-1"));
+        Thread elevator2 = new Thread(new ElevatorRunnable("Elevator-2"));
+
+        elevator1.start();
+        elevator2.start();
+
+        try {
+            elevator1.join();
+            elevator2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Оба лифта завершили работу. Всего рейсов: " + totalTrips.get());
+    }
+
+    static class ElevatorRunnable implements Runnable {
+        private String name;
+
+        public ElevatorRunnable(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 1; i <= 5; i++) {
+                System.out.println("Лифт [" + name + "]: этаж, рейс [" + i + "]");
+                try {
+                    Thread.sleep(800);
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                totalTrips.incrementAndGet();
+            }
+        }
+    }
+}
